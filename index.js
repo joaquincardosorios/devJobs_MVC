@@ -11,6 +11,7 @@ const cookierParser = require('cookie-parser')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const bodyParser = require('body-parser')
+const flash = require('connect-flash')
 
 require('dotenv').config({path:'variables.env'})
 
@@ -42,6 +43,15 @@ app.use(session({
     saveUninitialized: false,
     store: new MongoStore({ mongooseConnection : mongoose.connection})
 }))
+
+// Alertas y flash messages
+app.use(flash())
+
+// Crear nuestro middleware
+app.use((req, res,next) => {
+    res.locals.mensajes = req.flash()
+    next()
+})
 
 // Utiliza el router sin ejecutarlo como función
 app.use('/', router());
