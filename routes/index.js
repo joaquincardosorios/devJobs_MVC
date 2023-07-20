@@ -24,6 +24,9 @@ module.exports = () => {
         usuariosController.validarRegistro,
         usuariosController.crearUsuario
     )
+
+    // Autentica usuarios
+    router.get('/iniciar-sesion', usuariosController.formIniciarSesion)
     
     return router;
 }
