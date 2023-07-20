@@ -9,5 +9,12 @@ module.exports = () => {
     // Crear Vacantes
     router.get('/vacantes/nueva', vacanteController.formularioNuevaVacante)
     router.post('/vacantes/nueva', vacanteController.agregarVacante)
+    
+    // Mostrar Vacante
+    router.get('/vacantes/:url', vacanteController.mostrarVacante)
+
+    // Editar vacante
+    router.get('/vacantes/editar/:url', vacanteController.formEditarVacante)
+    
     return router;
 }

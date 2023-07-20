@@ -2,7 +2,9 @@ const mongoose = require('mongoose')
 require('./config/db')
 
 const express = require('express');
+const handlebars = require('handlebars');
 const exphbs = require('express-handlebars');
+const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access');
 const path = require('path');
 const router = require('./routes');
 const cookierParser = require('cookie-parser')
@@ -21,8 +23,9 @@ app.use(bodyParser.urlencoded({extended: true}))
 // Habilitar Handlebars como views
 app.engine('handlebars', 
     exphbs({
+        handlebars: allowInsecurePrototypeAccess(handlebars),
         defaultLayout: 'layout',
-        helpers: require('./helpers/handlebars')
+        helpers: require('./helpers/handlebars'),
     })
 );
 app.set('view engine', 'handlebars');
