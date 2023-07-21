@@ -1,8 +1,7 @@
 const passport = require('passport')
 const localStrategy = require('passport-local').Strategy
 const mongoose = require('mongoose')
-const Usuarios = require('../models/Usuarios')
-const Usuario = mongoose.model('Usuarios')
+const Usuarios = mongoose.model('Usuarios')
 
 passport.use(new localStrategy({
     usernameField: 'email',
@@ -27,7 +26,7 @@ passport.use(new localStrategy({
 passport.serializeUser((usuario,done) => done(null, usuario._id))
 
 passport.deserializeUser(async (id,done) => {
-    const usuario = await Usuario.findById(id)
+    const usuario = await Usuarios.findById(id).exec();
     return done(null,usuario)
 })
 
