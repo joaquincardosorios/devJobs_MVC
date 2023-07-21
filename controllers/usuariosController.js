@@ -49,3 +49,25 @@ exports.formIniciarSesion = (req,res) => {
         nombrePagina: 'Iniciar Sesion devJobs'
     })
 }
+
+// Editar Perfil
+exports.formEditarPerfil = (req,res) => {
+    res.render('editar-perfil',{
+        nombrePagina: 'Edita tu Perfil en debJobs',
+        usuario: req.user
+    })
+}
+
+exports.editarPerfil= async (req,res) => {
+    const usuario = await Usuarios.findById(req.user._id)
+
+    usuario.nombre = req.body.nombre
+    usuario.email = req.body.email
+    if(req.body.password){
+        usuario.password = req.body.password
+    }
+    await usuario.save()
+    req.flash('correcto','Cambios guardados correctamente')
+    // redirect
+    res.redirect('/administracion')
+}
