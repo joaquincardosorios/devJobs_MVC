@@ -25,12 +25,17 @@ module.exports = () => {
     // Editar vacante
     router.get('/vacantes/editar/:url', 
         authController.verificarUsuario,
-        vacantesController.validarVacante,
         vacantesController.formEditarVacante
     )
     router.post('/vacantes/editar/:url', 
         authController.verificarUsuario,
+        vacantesController.validarVacante,
         vacantesController.editarVacante
+    )
+
+    // Eliminar vacante
+    router.delete('/vacantes/eliminar/:id',
+        vacantesController.eliminarVacante
     )
 
     // Crear cuentas
@@ -56,7 +61,7 @@ module.exports = () => {
         authController.mostrarPanel
     )
 
-    // Editar Perdil 
+    // Editar Perfil 
     router.get('/editar-perfil',
         authController.verificarUsuario,
         usuariosController.formEditarPerfil
