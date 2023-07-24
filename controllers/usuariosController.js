@@ -73,3 +73,29 @@ exports.editarPerfil= async (req,res) => {
     // redirect
     res.redirect('/administracion')
 }
+
+// sanitizar y validar el formulario de editar perfiles
+exports.validarPerfil = async (req, res, next) => {
+    await check('nombre').escape().notEmpty().withMessage('El nombre es obligatorio').run(req)
+    await check('email').escape().isEmail().withMessage('El email debe ser valido').run(req)
+    if(req.body.password){
+        await check('password').escape().isLength({min:6}).withMessage('El password debe ser de al menos 6 caracteres').run(req)
+    }
+
+    const errores = validationResult(req).array()
+    console.log(errores)
+
+    if(errores.length){
+        req.flash('error', errores.map( error => error.msg))
+        res.render('editar-perfil', {
+            nombrePagina: 'Edita tu Perfil en debJobs',
+            usuario: req.user,
+            cerrarSesion: true,
+            nombre: req.user.nombre,
+            mensajes: req.flash()
+        })
+
+        return
+    }
+    next()
+}
