@@ -38,5 +38,11 @@
     <div class="enviar-datos"></div>
     <div class="info-reclutador">
         <h2>Informacion Reclutador</h2>
+        {{#if vacante.autor.nombre}}
+            <p>{{vacante.autor.nombre}}</p>
+        {{/if}}
+        {{#if vacante.autor.imagen}}
+            <img src="/uploads/perfiles/{{vacante.autor.imagen}}">
+        {{/if}}
     </div>
 </div>
