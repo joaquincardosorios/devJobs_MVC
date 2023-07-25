@@ -7,3 +7,4 @@ npm i --save bcrypt
 npm i --save connect-flash express-validator
 npm i --save passport passport-local
 npm i --save axios sweetalert2
+npm i --save multer

@@ -1,6 +1,57 @@
 const mongoose = require('mongoose')
 const Usuarios = mongoose.model('Usuarios')
 const { check, validationResult } =  require('express-validator')
+const multer = require('multer')
+const shortid = require('shortid')
+
+exports.subirImagen = (req,res,next) => {
+    upload(req, res, function(error) {
+        if(error){
+            if(error instanceof multer.MulterError){
+                if(error.code === 'LIMIT_FILE_SIZE'){
+                    req.flash('error', 'El archivo es muy pesado, maximo 100kb')
+                } else {
+                    req.flash('error', error.message)
+                }
+            } else {
+                req.flash('error', error.menssage)
+                if (error.hasOwnProperty('message')) {
+                    req.flash('error', error.message)
+                }
+            }
+
+            res.redirect('/administracion')
+            return
+        } else {
+            return next();
+        }
+    })
+}
+
+// Opciones de Multer
+const configuracionMulter = {
+    limits : { fileSize : 100000},
+    storage: fileStorage = multer.diskStorage({
+        destination: (req,file,cb)=> {
+            cb(null, __dirname+'../../public/uploads/perfiles')
+        },
+        filename : (req,file,cb) => {
+            const extension = file.mimetype.split('/')[1]
+            cb(null, `${shortid.generate()}.${extension}`)
+        }
+    }),
+    fileFilter(req,file,cb){
+        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' ){
+            // el callback se ejecuta como true o false : true cuando la imagen se acepta
+            cb(null, true)
+        } else {
+            cb(new Error('Formato No Valido'), false)
+        }
+    }
+}
+
+const upload = multer(configuracionMulter).single('imagen')
+
 
 exports.formCrearCuenta = (req,res) => {
     res.render('crear-cuenta', {
@@ -8,6 +59,8 @@ exports.formCrearCuenta = (req,res) => {
         tagline: 'Comienza a publicar tus vacantes gratis, solo debes crear una cuenta'
     })
 }
+
+
 
 exports.validarRegistro = async (req,res,next) => {
     await check('nombre').escape().notEmpty().withMessage('El nombre es obligatorio').run(req)
@@ -56,7 +109,8 @@ exports.formEditarPerfil = (req,res) => {
         nombrePagina: 'Edita tu Perfil en debJobs',
         usuario: req.user,
         cerrarSesion: true,
-        nombre: req.user.nombre
+        nombre: req.user.nombre,
+        imagen : req.user.imagen
     })
 }
 
@@ -68,6 +122,11 @@ exports.editarPerfil= async (req,res) => {
     if(req.body.password){
         usuario.password = req.body.password
     }
+
+    if(req.file){
+        usuario.imagen = req.file.filename
+    }
+
     await usuario.save()
     req.flash('correcto','Cambios guardados correctamente')
     // redirect
@@ -92,10 +151,12 @@ exports.validarPerfil = async (req, res, next) => {
             usuario: req.user,
             cerrarSesion: true,
             nombre: req.user.nombre,
-            mensajes: req.flash()
+            mensajes: req.flash(),
+            imagen : req.user.imagen
         })
 
         return
     }
     next()
 }
+
