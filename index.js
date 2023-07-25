@@ -12,6 +12,7 @@ const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 const bodyParser = require('body-parser')
 const flash = require('connect-flash')
+const createError = require('http-errors')
 const passport = require('./config/passport')
 
 require('dotenv').config({path:'variables.env'})
@@ -60,5 +61,19 @@ app.use((req, res,next) => {
 
 // Utiliza el router sin ejecutarlo como función
 app.use('/', router());
+
+// 404 Pagiuna no existente
+app.use((req,res,next) => {
+    next(createError(404,'No encontrado'))
+})
+
+// Administracion de errores
+app.use((error, req,res,next) => {
+    res.locals.mensaje = error.message
+    const status = error.status || 500
+    res.locals.status = status
+    res.status(status)
+    res.render('error')
+})
 
 app.listen(process.env.PORT);
