@@ -79,7 +79,7 @@ app.use((error, req,res,next) => {
 
 // Prparar deployment
 const host = '0.0.0.0'
-const port = process.env.PORT
-app.listen(port, host, () => {
+const port = process.env.PORT || 3000
+app.listen(port, () => {
     console.log('El puerto esta funcionando')
 });
